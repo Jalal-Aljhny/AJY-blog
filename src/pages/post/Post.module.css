@@ -1,0 +1,98 @@
+.post {
+  padding-block: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.image {
+  width: 400px;
+  max-width: 100%;
+  position: relative;
+}
+.image::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  bottom: 0;
+  background-image: linear-gradient(to top, #777, rgba(0, 0, 0, 0.05));
+}
+.image img {
+  width: 100%;
+}
+
+.title {
+  color: #fff;
+  margin-top: -10%;
+  position: relative;
+  max-width: 400px;
+  font-size: 0.8rem;
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  .title {
+    margin-top: -9%;
+    font-size: 1rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .title {
+    margin-top: -7%;
+    font-size: 1.25rem;
+  }
+}
+@media (min-width: 992px) {
+  .title {
+    margin-top: -5%;
+    font-size: 1.5rem;
+  }
+}
+.body {
+  margin-top: 3rem;
+  padding-inline: 1rem;
+  line-height: 1.6;
+}
+.body h1 {
+  font-size: 1.25rem;
+  line-height: 2;
+}
+.body h2 {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+.body h3 {
+  font-size: 1rem;
+}
+.body p {
+  font-size: 0.8rem;
+  -webkit-padding-start: 0.5rem;
+  padding-inline-start: 0.5rem;
+}
+.body a {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.body ul {
+  list-style: disc;
+}
+.body ol {
+  list-style: auto;
+}
+
+.btn {
+  margin-left: auto;
+  margin-top: 0.5rem;
+  display: block;
+  border: 2px solid #777;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  transition-duration: 300ms;
+  color: #777;
+}
+.btn:hover {
+  border-color: white;
+  color: white;
+  background-color: #777;
+}

@@ -1,0 +1,65 @@
+.container {
+  max-width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin: 0.5rem auto;
+}
+.image {
+  border-radius: 0.5rem;
+  width: 200px;
+  height: 200px;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+.image:active {
+  scale: 0.97;
+}
+.loading,
+.error,
+.no_image {
+  text-align: center;
+  color: #7171d6;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+.error {
+  color: #e22810;
+  font-size: 0.75rem;
+}
+.image__selected {
+  position: relative;
+}
+.image__selected::after {
+  position: absolute;
+  content: "Image url selected";
+  padding: 0.5rem;
+  background-color: #7c7ceb;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.8rem;
+  transition-duration: 1s;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  top: 10%;
+  left: 50%;
+  text-wrap: nowrap;
+  font-style: italic;
+  z-index: 10;
+}
+.not__clicked:after {
+  transform: translateX(-50%) scale(0.5);
+  opacity: 0;
+}
+.clicked:after {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}

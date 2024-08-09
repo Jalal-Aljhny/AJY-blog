@@ -1,0 +1,41 @@
+.footer {
+  background-color: #0d2436;
+  padding: 1rem;
+  text-align: center;
+}
+.icon {
+  display: flex;
+  width: 50px;
+  height: 50px;
+  margin-inline: auto;
+  color: #fff;
+  background: #1576d8;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.footer > p {
+  color: #5a7184;
+  margin-block: 1rem;
+  font-weight: bold;
+}
+.developers {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.developers > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.developers p {
+  color: #1576d8;
+  font-weight: bold;
+  font-style: italic;
+}
+.developers small {
+  color: #fff;
+  font-size: 0.6rem;
+}

@@ -1,0 +1,11 @@
+.header {
+  padding-block: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  height: 50px;
+  border-radius: 20px;
+  cursor: pointer;
+}

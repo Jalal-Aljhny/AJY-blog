@@ -1,0 +1,16 @@
+.textarea {
+  padding: 1rem;
+  width: 100%;
+  border: 1px solid #959ead;
+  border-radius: 0.25rem;
+  color: #5a7184;
+  font-size: 1rem;
+  min-height: 150px;
+  resize: none;
+}
+.error {
+  border: 1px solid #f0160b;
+}
+.textarea:focus {
+  outline: none;
+}

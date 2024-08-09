@@ -1,0 +1,240 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 15px;
+}
+@media (max-width: 545px) {
+  html {
+    font-size: 14px;
+  }
+}
+@media (min-width: 576px) and (max-width: 767px) {
+  .container {
+    width: 540px;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    width: 720px;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+body {
+  min-height: 100vh;
+  position: relative;
+  font-family: "Open Sans", sans-serif;
+}
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+main {
+  padding-top: 4rem;
+}
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+input:focus {
+  outline: none;
+}
+.btn {
+  display: flex;
+  width: 180px;
+  justify-content: space-between;
+  align-items: center;
+  color: #1565d8;
+  background-color: #fff;
+  border: 2px solid #1565d8;
+  padding: 0.75rem 1.25rem;
+  margin-block: 2rem;
+  margin-inline: auto;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition-duration: 0.3s;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn :is(button, a) {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+.btn:hover {
+  color: #fff;
+  background-color: #1565d8;
+}
+.submit {
+  width: 60%;
+  color: #fff;
+  background-color: #1565d8;
+  padding: 0.75rem 1.25rem;
+  margin-block: 2rem;
+  margin-inline: auto;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition-duration: 0.3s;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+}
+.submit:hover {
+  color: #1565d8;
+  background-color: #fff;
+  border: 1px solid #1565d8;
+}
+.submit:disabled {
+  cursor: not-allowed;
+  color: #fff;
+  background-color: #1565d8;
+  border: none;
+}
+.form {
+  width: 500px;
+  max-width: 90vw;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  box-shadow: 0px 2px 20px #77777752;
+  border-radius: 1rem;
+  margin-top: 10vh;
+  row-gap: 1rem;
+  position: relative;
+}
+.w-7 {
+  width: 700px;
+}
+.form h2 {
+  margin-block: 1rem;
+  color: #183b56;
+}
+.form > div:not(:is(.ql-snow, .ql-tooltip, .search__image)) {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  width: 100%;
+  position: relative;
+}
+.form label {
+  color: #5a7184;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.form input {
+  border: none;
+  padding: 0.75rem;
+  border: 1px solid #959ead;
+  border-radius: 0.25rem;
+  color: #5a7184;
+  font-size: 1rem;
+}
+.form input ::-webkit-input-placeholder {
+  color: #959ead;
+  font-size: 1rem;
+}
+.form input ::-moz-placeholder {
+  color: #959ead;
+  font-size: 1rem;
+}
+.form input :-ms-input-placeholder {
+  color: #959ead;
+  font-size: 1rem;
+}
+.form input ::-ms-input-placeholder {
+  color: #959ead;
+  font-size: 1rem;
+}
+.form input ::placeholder {
+  color: #959ead;
+  font-size: 1rem;
+}
+.error__message {
+  color: #f0160b;
+  margin-top: -1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+small.error {
+  color: #f0160b;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+
+  margin-bottom: 2rem;
+}
+input.error {
+  border: 1px solid #f0160b;
+}
+form.error {
+  box-shadow: 0px 2px 20px #f0160b50;
+}
+.show__icon {
+  color: #5a7184;
+  position: absolute;
+  right: 5%;
+  top: 62%;
+  cursor: pointer;
+  scale: 1.2;
+}
+.btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.absolute {
+  position: absolute;
+  top: 12%;
+}
+/* react quill custom styele  */
+/* .ql-editor p {
+  min-height: 200px;
+} */
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+  border-top: 1px solid #ccc;
+}
+.ql-toolbar.ql-snow {
+  border-radius: 1rem;
+}
+/* react quill custom styele  */
+
+.posts_container > :is(div, a) {
+  transition-duration: 0.3s;
+  cursor: pointer;
+}
+.posts_container > :is(div, a):hover {
+  scale: 1.05;
+}
+.posts_container:hover > :is(div, a):not(:hover) {
+  -webkit-filter: blur(2px);
+  filter: blur(2px);
+  scale: 0.98;
+}
+.image_selected {
+  max-height: 200px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  padding: 1rem;
+  border: 1px solid #959ead;
+  border-radius: 0.25rem;
+}
