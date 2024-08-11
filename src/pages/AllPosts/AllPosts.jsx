@@ -1,23 +1,71 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { AuthContext } from "../../services/context/AuthContext";
 import Post from "../../components/Post";
+import styles from "../../components/Hero.module.css";
+import { IoClose, IoSearch } from "react-icons/io5";
 
 const AllPosts = () => {
-  const { data } = useContext(AuthContext);
+  const {
+    sendData: data,
+    mode,
+    handleMode,
+    serachInTitle,
+    fetchNextPage,
+  } = useContext(AuthContext);
+  const [value, setValue] = useState("");
 
   return (
     <>
+      <div style={{ marginBlock: "3rem 8rem" }}>
+        <div className={styles.search}>
+          <IoSearch className={styles.search__icon} />
+          <input
+            type="text"
+            placeholder="Search article"
+            className={styles.search__field}
+            value={value}
+            onChange={(e) => {
+              if (e.currentTarget.value.length == 0) {
+                handleMode("normal");
+              }
+              setValue(e.currentTarget.value);
+            }}
+          />
+          <button
+            type="submit"
+            className={styles.search__submit}
+            onClick={() => {
+              if (value.length > 0) {
+                serachInTitle(value);
+              }
+            }}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
       <section
         className="container posts_container"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill , minmax(300px , 1fr))",
           gap: "2rem 1.5rem ",
-          marginBlock: "2rem",
+          marginBlock: "5rem",
           justifyContent: "center",
+          position: "relative",
         }}
       >
+        {mode == "search" ? (
+          <small
+            className="close_btn"
+            onClick={() => {
+              handleMode("normal");
+            }}
+          >
+            <IoClose size={20} />
+          </small>
+        ) : null}
         {data?.posts?.length > 0
           ? data.posts.map((post) => {
               return (
@@ -25,7 +73,7 @@ const AllPosts = () => {
                   title={post.title}
                   image={post.imgUrl}
                   id={post.id}
-                  date={post.updated_at}
+                  date={post["Last Update"]}
                   userId={post.user_id}
                   key={post.id}
                 />
@@ -33,10 +81,26 @@ const AllPosts = () => {
             })
           : null}
       </section>
-      <div className="btn">
-        <button>More aticles</button>
-        <FaArrowRight />
-      </div>
+      {mode == "search" && data?.posts?.length == 0 ? (
+        <small
+          className="error"
+          style={{ marginInline: "auto", display: "block" }}
+        >
+          No post title conatains any word you entered ..!
+        </small>
+      ) : null}
+      {mode == "normal" ? (
+        <div
+          className="btn"
+          onClick={() => {
+            fetchNextPage();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          <button>More aticles</button>
+          <FaArrowRight />
+        </div>
+      ) : null}
     </>
   );
 };

@@ -17,9 +17,13 @@ const Post = () => {
         .then((res) => {
           setData(res.data);
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          navigate(`/${postId}`);
+        });
+    } else {
+      navigate(`/${postId}`);
     }
-  }, [getPostById, postId]);
+  }, [getPostById, postId, location.pathname, navigate]);
   return (
     <article className={`container`}>
       {data ? (

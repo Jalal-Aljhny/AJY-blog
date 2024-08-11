@@ -14,13 +14,11 @@ import { AuthContext } from "../../services/context/AuthContext";
 
 const AddPost = () => {
   const [value, setValue] = useState("");
-  // const [urlValue, setUrlValue] = useState("");
   const titleRef = useRef();
   const captioneRef = useRef();
   const imageRef = useRef();
   const [mod, setMod] = useState("add");
 
-  // const { imgUrl, choose } = useContext(SearchContext);
   const { addPost, addErrors } = useContext(AuthContext);
   const [image, setImage] = useState(null);
   const handleImageChange = (event) => {
@@ -74,10 +72,7 @@ const AddPost = () => {
             <label htmlFor="title">Post title :</label>
             <input type="text" id="title" name="title" ref={titleRef} />
           </div>
-          {/* <div className="form-group">
-            <label htmlFor="title">Post glance :</label>
-            <input type="text" id="title" name="title" />
-          </div> */}
+
           <div className="form-group">
             <label htmlFor="file">Image file :</label>
             <input
@@ -87,10 +82,6 @@ const AddPost = () => {
               accept="image/*"
               ref={imageRef}
               onChange={handleImageChange}
-              // value={choose ? imgUrl : urlValue}
-              // onChange={(e) => {
-              //   setUrlValue(e.currentTarget.value);
-              // }}
             />
             {image ? (
               <img
@@ -100,19 +91,7 @@ const AddPost = () => {
               />
             ) : null}
           </div>
-          {/* <label htmlFor="image search" style={{ width: "100%" }}>
-            Search for image :
-          </label>
-          <div
-            className="search__image"
-            id="search image"
-            style={{ width: "100%" }}
-          >
-            <Form />
-            <Filters />
-            <ImagesContainer />
-            <Buttons />
-          </div> */}
+
           <label htmlFor="body" style={{ width: "100%" }}>
             Post body :
           </label>
