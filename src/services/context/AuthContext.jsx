@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [data, setData] = useState([]);
   const [addErrors, setAddErrors] = useState("");
+  const [updatePostErrors, setUpdatePostErrors] = useState("");
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(["auth_token"]);
   const [user, setUser] = useState({
@@ -20,6 +21,20 @@ export const AuthProvider = ({ children }) => {
     email: null,
     date: null,
   });
+  const [mode, setMode] = useState("normal");
+  const [sendData, setSendData] = useState([]);
+  const [filterdData, setFilterdData] = useState([]);
+  const [pagination, setPagination] = useState(1);
+  const [changeMode, setChangeMode] = useState();
+  const [changePasswordState, setChangePasswordState] = useState({});
+
+  useEffect(() => {
+    if (mode == "normal") {
+      setSendData(data);
+    } else {
+      setSendData(filterdData);
+    }
+  }, [data, filterdData, mode, sendData]);
 
   const [errors, setErrors] = useState({
     name: null,
@@ -40,134 +55,6 @@ export const AuthProvider = ({ children }) => {
     if (parts.length === 2) return parts.pop().split(";").shift();
   }, []);
 
-  // Registeration function
-  const register = useCallback(
-    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
-    async (name, email, password) => {
-      // get request to laravel Sanctum
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
-      // post request
-      await axios
-        .post(
-          "http://127.0.0.1:8000/api/register",
-          {
-            name: name,
-            email: email,
-            password: password,
-          },
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            },
-            withCredentials: true,
-            withXSRFToken: true,
-          }
-        )
-        .then((res) => {
-          // if request succesfully
-          console.log(res);
-          setIsAuth(true);
-          navigate("/");
-          //navigate to root router and change auth state to true
-          const expiration = new Date();
-          expiration.setHours(48);
-          setCookie("auth_token", res.data.token, {
-            path: "/",
-            expires: expiration,
-          });
-          setUser("user");
-          //set cookie with expiration of 48 hours and change user state from null to "user"
-        })
-        .catch((error) => {
-          //else set errors to show it to user and change auth state to false
-          console.log("error : ", error);
-          setIsAuth(false);
-          setErrors({
-            name: Object.keys(error?.response?.data?.errors)[0],
-            message: Object.values(error?.response?.data?.errors)[0],
-          });
-        });
-    },
-    [getCookie, navigate, setCookie]
-  );
-  //Log In Function
-  const logIn = useCallback(
-    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
-    async (email, password) => {
-      // get request to laravel Sanctum
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
-      // post request
-      await axios
-        .post(
-          "http://127.0.0.1:8000/api/login",
-          {
-            email: email,
-            password: password,
-          },
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-            },
-            withCredentials: true,
-            withXSRFToken: true,
-          }
-        )
-        .then((res) => {
-          // if request succesfully
-          setIsAuth(true);
-          navigate("/");
-          //navigate to root router and change auth state to true
-          const expiration = new Date();
-          expiration.setHours(48);
-          setCookie("auth_token", res.data.token, {
-            path: "/",
-            expires: expiration,
-          });
-          setUser("user");
-          //set cookie with expiration of 48 hours and change user state from null to "user"
-        })
-        .catch((error) => {
-          console.log(error?.response?.data);
-          setIsAuth(false);
-          //else set errors to show it to user and change auth state to false
-          if (Object.values(error?.response?.data)[1] == "validation error") {
-            setErrors({
-              name: "email",
-              message: "This email is not found",
-            });
-          } else {
-            setErrors({
-              name: "mismatch",
-              message: Object.values(error?.response?.data)[1],
-            });
-          }
-        });
-    },
-    [getCookie, navigate, setCookie]
-  );
-  //SignOut function
-  const signout = useCallback(() => {
-    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
-    removeCookie("auth_token");
-    removeCookie("XSRF-TOKEN");
-    //remove cookies
-    navigate("/");
-    setUser(null);
-    //remove user and navigate to root router
-    window.location.reload();
-    //reload page
-  }, [removeCookie, navigate]);
-
   const profile = useCallback(async () => {
     await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
       withCredentials: true,
@@ -184,11 +71,143 @@ export const AuthProvider = ({ children }) => {
         setUser({
           name: response.data.data.name,
           email: response.data.data.email,
-          date: response.data.data.updated_at,
+          date: response.data.data.created_at,
+          permissions: response.data.data.permissions,
         });
       })
       .catch((error) => console.log("Profile error : ", error));
   }, [cookies.auth_token]);
+  const changeName = useCallback(
+    async (newName) => {
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+      await axios
+        .patch(
+          "http://127.0.0.1:8000/api/profile",
+          {
+            name: newName,
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${cookies.auth_token}`,
+            },
+          }
+        )
+        .then(() => {
+          profile();
+          navigate("/profile");
+        })
+        .catch((error) => console.log("change name error : ", error));
+    },
+    [cookies.auth_token, getCookie, navigate, profile]
+  );
+  const changePassword = useCallback(
+    async (password, newPassword, confirmNewPassword) => {
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+      await axios
+        .patch(
+          "http://127.0.0.1:8000/api/profile/update-password",
+          {
+            password: password,
+            new_password: newPassword,
+            new_password_confirmation: confirmNewPassword,
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${cookies.auth_token}`,
+            },
+          }
+        )
+        .then(() => {
+          setChangePasswordState("success");
+        })
+        .catch(() => setChangePasswordState("failure"));
+    },
+    [cookies.auth_token, getCookie]
+  );
+  const clearChangePasswordState = useCallback(() => {
+    setChangePasswordState("");
+  }, []);
+  const getPosts = useCallback(async () => {
+    await axios
+      .get("http://127.0.0.1:8000/api/posts")
+      //save posts to data state
+      .then((res) => {
+        setData(res.data);
+        setMode("normal");
+        setPagination(1);
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err.message));
+  }, []);
+
+  const fetchNextPage = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/api/posts?page=${pagination + 1}`)
+      .then((res) => {
+        if (Object.values(res.data.posts)[0].id) {
+          setData({ ...data, posts: [...data.posts, ...res.data.posts] });
+          setPagination(pagination + 1);
+        }
+        setMode("normal");
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  const getPostById = useCallback(async (id) => {
+    const response = await axios.get(`http://127.0.0.1:8000/api/posts/${id}`);
+    return response;
+  }, []);
+
+  const updatePostById = useCallback(
+    async (id, title, caption, img) => {
+      const formData = new FormData();
+      formData.append("_method", "put");
+      formData.append("title", title);
+      formData.append("caption", caption);
+      if (img) {
+        formData.append("img", img);
+      }
+
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+
+      // post request
+      await axios
+        .post(`http://127.0.0.1:8000/api/posts/${id}`, formData, {
+          headers: {
+            Accept: "application/json",
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            Authorization: `Bearer ${cookies.auth_token}`,
+          },
+          withCredentials: true,
+          withXSRFToken: true,
+        })
+        .then(() => {
+          if (sessionStorage.getItem("previos_route")) {
+            navigate(sessionStorage.getItem("previos_route"));
+          } else {
+            navigate("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setUpdatePostErrors(err.message);
+        });
+    },
+    [cookies.auth_token, getCookie, navigate]
+  );
 
   const addPost = useCallback(
     async (title, caption, img) => {
@@ -227,29 +246,196 @@ export const AuthProvider = ({ children }) => {
     },
     [cookies, getCookie, navigate]
   );
+  const deletePost = useCallback(
+    async (id) => {
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
 
-  const getPosts = useCallback(async () => {
-    await axios
-      .get("http://127.0.0.1:8000/api/posts")
-      //save posts to data state
-      .then((res) => setData(res.data))
-      .catch((err) => console.log(err.message));
-  }, []);
-
-  const getPostById = useCallback(async (id) => {
-    const response = await axios.get(`http://127.0.0.1:8000/api/posts/${id}`);
-    return response;
-  }, []);
-
-  useEffect(() => {
-    getPosts();
-  }, [getPosts, addPost]);
+      await axios
+        .delete(`http://127.0.0.1:8000/api/posts/${id}`, {
+          headers: {
+            Accept: "application/json",
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            Authorization: `Bearer ${cookies.auth_token}`,
+          },
+          withCredentials: true,
+          withXSRFToken: true,
+        })
+        .then(() => {
+          setData({
+            ...data,
+            posts: [...data.posts.filter((post) => post.id != id)],
+          });
+          if (sessionStorage.getItem("previos_route")) {
+            navigate(sessionStorage.getItem("previos_route"));
+          } else {
+            navigate("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [cookies, getCookie, navigate, data]
+  );
 
   const serachInTitle = useCallback((title) => {
     axios
       .get(`http://127.0.0.1:8000/api/posts/search?search=${title}`)
-      .then((res) => console.log(res));
+      .then((res) => {
+        setFilterdData(res.data);
+        setMode("search");
+      });
   }, []);
+
+  const handleMode = useCallback((mode) => {
+    setMode(mode);
+  }, []);
+  const handleChangeMode = useCallback((mode) => {
+    setChangeMode(mode);
+  }, []);
+  // Registeration function
+  const register = useCallback(
+    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
+    async (name, email, password, password2) => {
+      // get request to laravel Sanctum
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+      // post request
+      console.table(name, email, password, password2);
+      await axios
+        .post(
+          "http://127.0.0.1:8000/api/register",
+          {
+            name: name,
+            email: email,
+            password: password,
+            password_confirmation: password2,
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+            withXSRFToken: true,
+          }
+        )
+        .then((res) => {
+          // if request succesfully
+          setIsAuth(true);
+          if (sessionStorage.getItem("previos_route")) {
+            navigate(sessionStorage.getItem("previos_route"));
+          } else {
+            navigate("/");
+          }
+          //navigate to root router and change auth state to true
+          const expiration = new Date();
+          expiration.setHours(48);
+          setCookie("auth_token", res.data.token, {
+            path: "/",
+            expires: expiration,
+          });
+          setUser("user");
+          //set cookie with expiration of 48 hours and change user state from null to "user"
+        })
+        .catch((error) => {
+          //else set errors to show it to user and change auth state to false
+          console.log(
+            "error : ",
+            error?.response?.data?.errors,
+            error?.response?.data?.errors
+          );
+          setIsAuth(false);
+          setErrors({
+            name: Object.keys(error?.response?.data?.errors)[0],
+            message: Object.values(error?.response?.data?.errors)[0],
+          });
+        });
+    },
+    [getCookie, navigate, setCookie]
+  );
+  //Log In Function
+  const logIn = useCallback(
+    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
+    async (email, password) => {
+      // get request to laravel Sanctum
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+      // post request
+      await axios
+        .post(
+          "http://127.0.0.1:8000/api/login",
+          {
+            email: email,
+            password: password,
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            },
+            withCredentials: true,
+            withXSRFToken: true,
+          }
+        )
+        .then((res) => {
+          // if request succesfully
+
+          setIsAuth(true);
+          if (sessionStorage.getItem("previos_route")) {
+            navigate(sessionStorage.getItem("previos_route"));
+          } else {
+            navigate("/");
+          }
+          //navigate to root router and change auth state to true
+          const expiration = new Date();
+          expiration.setHours(48);
+          setCookie("auth_token", res.data.token, {
+            path: "/",
+            expires: expiration,
+          });
+          setUser("user");
+          //set cookie with expiration of 48 hours and change user state from null to "user"
+        })
+        .catch((error) => {
+          setIsAuth(false);
+          //else set errors to show it to user and change auth state to false
+          if (Object.values(error?.response?.data)[1] == "validation error") {
+            setErrors({
+              name: "email",
+              message: "This email is not found",
+            });
+          } else {
+            setErrors({
+              name: "mismatch",
+              message: Object.values(error?.response?.data)[1],
+            });
+          }
+        });
+    },
+    [getCookie, navigate, setCookie]
+  );
+  //SignOut function
+  const signout = useCallback(() => {
+    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
+    removeCookie("auth_token");
+    removeCookie("XSRF-TOKEN");
+    setUser(null);
+    //remove cookies
+    navigate("/");
+    //remove user and navigate to root router
+    window.location.reload();
+    //reload page
+  }, [removeCookie, navigate]);
 
   useEffect(() => {
     // used useEffect react hook so function run every time that one of its dependencies update
@@ -260,7 +446,114 @@ export const AuthProvider = ({ children }) => {
       setIsAuth(false);
     }
   }, [cookies, getCookie]);
+  useEffect(() => {
+    getPosts();
+  }, [getPosts, addPost]);
 
+  const getUsers = useCallback(async () => {
+    return await axios.get("http://127.0.0.1:8000/api/users", {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${cookies.auth_token}`,
+      },
+    });
+  }, [cookies]);
+
+  const deleteUser = useCallback(
+    async (id) => {
+      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+
+      await axios
+        .delete(`http://127.0.0.1:8000/api/users/${id}`, {
+          headers: {
+            Accept: "application/json",
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+            Authorization: `Bearer ${cookies.auth_token}`,
+          },
+          withCredentials: true,
+          withXSRFToken: true,
+        })
+        .then(() => {
+          getUsers();
+          navigate("/manageUsers");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [cookies, getCookie, navigate, getUsers]
+  );
+  const updateUser = useCallback(
+    async (id, name, role) => {
+      await axios.get(
+        "http://127.0.0.1:8000/sanctum/csrf-cookie",
+
+        {
+          withCredentials: true,
+          withXSRFToken: true,
+        }
+      );
+
+      await axios
+        .post(
+          `http://127.0.0.1:8000/api/users/${id}`,
+          {
+            _method: "put",
+            name: name,
+            roles: role,
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              Authorization: `Bearer ${cookies.auth_token}`,
+            },
+            withCredentials: true,
+            withXSRFToken: true,
+          }
+        )
+        .then(() => {
+          getUsers();
+          navigate("/manageUsers");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    [cookies, getCookie, navigate, getUsers]
+  );
+  const getUserRoles = useCallback(
+    (id) => {
+      return axios.get(`http://127.0.0.1:8000/api/users/${id}/edit`, {
+        headers: {
+          Accept: "application/json",
+          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          Authorization: `Bearer ${cookies.auth_token}`,
+        },
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+    },
+    [cookies, getCookie]
+  );
+
+  // const getRoles = useCallback(async () => {
+  //   await axios
+  //     .get("http://127.0.0.1:8000/api/roles", {
+  //       headers: {
+  //         Accept: "application/json",
+  //         Authorization: `Bearer ${cookies.auth_token}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setHtml(response.data);
+  //     })
+  //     .catch((error) => console.log("Roles error : ", error));
+  // }, [cookies]);
+  // getRules();
   return (
     <CookiesProvider>
       <AuthContext.Provider
@@ -276,9 +569,25 @@ export const AuthProvider = ({ children }) => {
           getCookie,
           addPost,
           addErrors,
-          data,
+          sendData,
           getPostById,
           serachInTitle,
+          mode,
+          handleMode,
+          fetchNextPage,
+          changeMode,
+          handleChangeMode,
+          changeName,
+          changePassword,
+          changePasswordState,
+          clearChangePasswordState,
+          deletePost,
+          updatePostById,
+          updatePostErrors,
+          getUsers,
+          deleteUser,
+          updateUser,
+          getUserRoles,
         }}
       >
         {children}
