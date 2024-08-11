@@ -82,6 +82,27 @@ input:focus {
   color: #fff;
   background-color: #1565d8;
 }
+.close_btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #1565d8;
+  color: #1565d8;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 300mx;
+  position: absolute;
+  top: -50px;
+  right: 5px;
+}
+.close_btn:hover {
+  color: #fff;
+  background-color: #1565d8;
+}
+
 .submit {
   width: 60%;
   color: #fff;
@@ -140,7 +161,7 @@ input:focus {
   font-size: 1rem;
   font-weight: 600;
 }
-.form input {
+.form :is(input, select) {
   border: none;
   padding: 0.75rem;
   border: 1px solid #959ead;
@@ -237,4 +258,40 @@ form.error {
   padding: 1rem;
   border: 1px solid #959ead;
   border-radius: 0.25rem;
+}
+.failure {
+  color: #f0160b;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+.success {
+  color: #3dc323;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+.keep {
+  color: #3dc323;
+  margin-left: auto;
+  display: block;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid #3dc323;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  font-weight: bold;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition-duration: 300ms;
+  background-color: #fff;
+}
+.keep:hover {
+  background-color: #3dc323;
+  color: #fff;
+}
+.keep:active {
+  scale: 0.95;
 }
