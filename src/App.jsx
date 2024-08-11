@@ -11,7 +11,10 @@ import Profile from "./components/Profile";
 import Contactus from "./pages/contact us/Contactus";
 import AddPost from "./pages/addPost/AddPost";
 import NotFound from "./components/NotFound";
+import ChangeProfile from "./components/ChangeProfile";
 import Post from "./pages/post/Post";
+import EditPost from "./components/EditPost";
+import MangeUsers from "./pages/mange users/MangeUsers";
 
 const App = () => {
   const location = useLocation();
@@ -22,7 +25,7 @@ const App = () => {
       document.body.style.backgroundColor = "#fff";
     }
   }, [location]);
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, user } = useContext(AuthContext);
 
   return (
     <>
@@ -38,8 +41,38 @@ const App = () => {
             element={<Navigate to={"/signin"} replace />}
           />
         )}
-        <Route path="/allposts/:post_title" element={<Post />} />
-        <Route path="/allposts" element={<AllPosts />} />
+        {isAuth ? (
+          <Route path="/changeProfile" element={<ChangeProfile />} />
+        ) : (
+          <Route
+            path="/changeProfile"
+            element={<Navigate to={"/signin"} replace />}
+          />
+        )}
+        <Route
+          path="/editpost/:post_id"
+          element={
+            isAuth && user?.permissions?.includes("Edit Post") ? (
+              <EditPost />
+            ) : (
+              <NotFound />
+            )
+          }
+        />
+        <Route
+          path="/manageUsers"
+          element={
+            isAuth &&
+            user?.permissions?.includes("Edit User") &&
+            user?.permissions?.includes("Delete User") ? (
+              <MangeUsers />
+            ) : (
+              <NotFound />
+            )
+          }
+        />
+        <Route path="/posts/:post_title" element={<Post />} />
+        <Route path="/posts" element={<AllPosts />} />
 
         {isAuth ? (
           <Route path="/profile" element={<Profile />} />
