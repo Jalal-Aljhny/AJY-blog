@@ -9,6 +9,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
 
   const {
@@ -19,7 +20,7 @@ const SignUp = () => {
 
   const onSumbit = async (data) => {
     clearErrors();
-    await signUp(data.username, data.email, data.password);
+    await signUp(data.username, data.email, data.password, data.password2);
   };
 
   const validateUserName = (username) => {
@@ -38,8 +39,13 @@ const SignUp = () => {
   };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
   // const [password , setPassword] = useState()
+  const validatePasswordConfirmation = (confirmValue) => {
+    const password = watch("password");
+    return password === confirmValue;
+  };
 
   return (
     <form
@@ -85,7 +91,7 @@ const SignUp = () => {
             validate: validateEmail,
           })}
           className={
-            signUpErrors.message?.length || errors.email ? "error" : null
+            signUpErrors.name == "email" || errors.email ? "error" : null
           }
           onChange={() => {
             clearErrors();
@@ -112,7 +118,9 @@ const SignUp = () => {
             required: true,
             validate: validatePassword,
           })}
-          className={errors.password ? "error" : null}
+          className={
+            signUpErrors.name == "password" || errors.password ? "error" : null
+          }
           onFocus={() => {
             setShowIcon(true);
           }}
@@ -129,6 +137,8 @@ const SignUp = () => {
                   ? { top: "27%" }
                   : errors.password?.type == "required"
                   ? { top: "52%" }
+                  : signUpErrors.name == "password"
+                  ? { top: "45%" }
                   : null
               }
             />
@@ -143,6 +153,8 @@ const SignUp = () => {
                   ? { top: "27%" }
                   : errors.password?.type == "required"
                   ? { top: "52%" }
+                  : signUpErrors.name == "password"
+                  ? { top: "45%" }
                   : null
               }
             />
@@ -159,6 +171,56 @@ const SignUp = () => {
             &#x2022; Onenumber. <br />
             &#x2022; One special character. <br />
             &#x2022; Eight characters. <br />
+          </small>
+        ) : null}
+        {signUpErrors.name == "password" ? (
+          <small className="error__message">{signUpErrors?.message[0]}</small>
+        ) : null}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="password2">Password Confirm</label>
+        <input
+          type={showPassword2 ? "text" : "password"}
+          name="password2"
+          id="password2"
+          placeholder="Password Confirm"
+          {...register("password2", {
+            required: true,
+            validate: validatePasswordConfirmation,
+          })}
+          className={errors.password2 ? "error" : null}
+          onFocus={() => {
+            setShowIcon(true);
+          }}
+        />
+        {showIcon ? (
+          !showPassword2 ? (
+            <FiEye
+              className="show__icon"
+              onClick={() => {
+                setShowPassword2(true);
+              }}
+              style={errors.password2 ? { top: "52%" } : null}
+            />
+          ) : (
+            <FiEyeOff
+              className="show__icon"
+              onClick={() => {
+                setShowPassword2(false);
+              }}
+              style={errors.password2 ? { top: "52%" } : null}
+            />
+          )
+        ) : null}
+        {errors.password2?.type == "required" ? (
+          <small className="error__message">
+            Password confirm cannot be empty.
+          </small>
+        ) : null}
+        {errors.password2?.type == "validate" ? (
+          <small className="error__message">
+            Does not match the password field
           </small>
         ) : null}
       </div>

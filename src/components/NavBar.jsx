@@ -2,24 +2,43 @@ import { NavLink } from "react-router-dom";
 import styles from "./NavBar.module.css";
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../services/context/AuthContext";
 
 const NavBar = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const { isAuth, signout, profile } = useContext(AuthContext);
-  const routers = isAuth
-    ? [
-        { name: "home", path: "/" },
-        { name: "All Posts", path: "/allPosts" },
-        { name: "Add Post ", path: "/addPost" },
-        { name: "Contact Us", path: "/contact" },
-      ]
-    : [
-        { name: "home", path: "/" },
-        { name: "All Posts", path: "/allPosts" },
-        { name: "Contact Us", path: "/contact" },
-      ];
+  const { isAuth, signout, profile, user } = useContext(AuthContext);
+  const isMount = useRef(false);
+
+  useEffect(() => {
+    if (!isMount.current && isAuth) {
+      profile();
+      isMount.current = true;
+    }
+  }, [profile, isAuth]);
+  const routers =
+    isAuth &&
+    user?.permissions?.includes("Create Post") &&
+    user?.permissions?.includes("Edit User") &&
+    user?.permissions?.includes("Delete User")
+      ? [
+          { name: "home", path: "/" },
+          { name: "All Posts", path: "/posts" },
+          { name: "Add Post ", path: "/addPost" },
+          { name: "Manage Users", path: "/manageUsers" },
+        ]
+      : isAuth && user?.permissions?.includes("Create Post")
+      ? [
+          { name: "home", path: "/" },
+          { name: "All Posts", path: "/posts" },
+          { name: "Add Post ", path: "/addPost" },
+          { name: "Contact Us", path: "/contact" },
+        ]
+      : [
+          { name: "home", path: "/" },
+          { name: "All Posts", path: "/posts" },
+          { name: "Contact Us", path: "/contact" },
+        ];
   return (
     <nav>
       {showMenu ? (
@@ -77,6 +96,7 @@ const NavBar = () => {
                 onClick={async () => {
                   setShowMenu(false);
                   await signout();
+                  signout();
                 }}
               >
                 Sign Out

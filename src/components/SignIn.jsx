@@ -9,10 +9,9 @@ const SignIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const onSumbit = async (data) => {
+  const onSumbit = (data) => {
     clearErrors();
-    await logIn(data.email, data.password);
+    logIn(data.email, data.password);
   };
 
   const validateEmail = (email) => {

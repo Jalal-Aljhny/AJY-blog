@@ -14,7 +14,7 @@ const Hero = () => {
     { id: 3, name: "Backend" },
     { id: 4, name: "Mobile" },
   ];
-  const { serachInTitle } = useContext(AuthContext);
+  const { serachInTitle, handleMode } = useContext(AuthContext);
   return (
     <section className="container">
       <h2 className={styles.sub__title}>Read the most interesting articles</h2>
@@ -31,6 +31,9 @@ const Hero = () => {
           className={styles.search__field}
           value={value}
           onChange={(e) => {
+            if (e.currentTarget.value.length == 0) {
+              handleMode("normal");
+            }
             setValue(e.currentTarget.value);
           }}
         />

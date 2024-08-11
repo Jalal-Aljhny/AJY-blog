@@ -26,13 +26,13 @@
   font-weight: bold;
   color: #1565d8;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-shadow: 2px 4px 10px -1px #183b56;
-  margin-left: auto;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   display: block;
   transition-duration: 0.3s;
   background-color: white;
+  font-size: 0.8rem;
 }
 .profile > div button:hover {
   background-color: #1565d8;
@@ -49,4 +49,26 @@
   display: grid;
   place-items: center;
   margin-inline: auto;
+}
+.permission {
+  padding-top: 2rem;
+}
+.permission ul {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.permission li {
+  font-size: 0.8rem;
+  font-style: italic;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border-bottom: 1px solid;
+}
+.profile > div:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
