@@ -4,16 +4,16 @@ import { useCallback, useContext, useState } from "react";
 import { AuthContext } from "../services/context/AuthContext";
 
 const Hero = () => {
-  const tagSearch = useCallback((value) => {
-    setValue(value);
-  }, []);
+  // const tagSearch = useCallback((value) => {
+  //   setValue(value);
+  // }, []);
   const [value, setValue] = useState("");
-  const tags = [
-    { id: 1, name: "Full Stack" },
-    { id: 2, name: "Frontend" },
-    { id: 3, name: "Backend" },
-    { id: 4, name: "Mobile" },
-  ];
+  // const tags = [
+  //   { id: 1, name: "Full Stack" },
+  //   { id: 2, name: "Frontend" },
+  //   { id: 3, name: "Backend" },
+  //   { id: 4, name: "Mobile" },
+  // ];
   const { serachInTitle, handleMode } = useContext(AuthContext);
   return (
     <section className="container">
@@ -49,7 +49,7 @@ const Hero = () => {
           Submit
         </button>
       </div>
-      <div className={styles.tags}>
+      {/* <div className={styles.tags}>
         <p>popular tags : </p>
 
         {tags.map((tag) => (
@@ -63,7 +63,7 @@ const Hero = () => {
             {tag.name}
           </span>
         ))}
-      </div>
+      </div> */}
     </section>
   );
 };

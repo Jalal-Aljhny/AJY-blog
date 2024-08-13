@@ -12,6 +12,9 @@ const Post = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (location?.pathname?.split("/").length > 0) {
+      sessionStorage.setItem("previos_route", location.pathname);
+    }
     if (Number(postId)) {
       getPostById(postId)
         .then((res) => {

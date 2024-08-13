@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
   const [pagination, setPagination] = useState(1);
   const [changeMode, setChangeMode] = useState();
   const [changePasswordState, setChangePasswordState] = useState({});
+  const [nextData, setNextData] = useState(true);
 
   useEffect(() => {
     if (mode == "normal") {
@@ -154,9 +155,11 @@ export const AuthProvider = ({ children }) => {
     await axios
       .get(`http://127.0.0.1:8000/api/posts?page=${pagination + 1}`)
       .then((res) => {
-        if (Object.values(res.data.posts)[0].id) {
+        if (Object.values(res.data.posts)[0]?.id) {
           setData({ ...data, posts: [...data.posts, ...res.data.posts] });
           setPagination(pagination + 1);
+        } else {
+          setNextData(false);
         }
         setMode("normal");
       })
@@ -425,13 +428,32 @@ export const AuthProvider = ({ children }) => {
     [getCookie, navigate, setCookie]
   );
   //SignOut function
-  const signout = useCallback(() => {
-    // used useCallback react hook so function does not need to recalculated until one of its dependencies update
+  const signout = useCallback(async () => {
+    // await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
+    //   withCredentials: true,
+    //   withXSRFToken: true,
+    // });
+    // await axios
+    //   .post("http://127.0.0.1:8000/api/logout", {
+    //     headers: {
+    //       Accept: "application/json",
+    //       Authorization: `Bearer ${cookies.auth_token}`,
+    //     },
+    //     withCredentials: true,
+    //     withXSRFToken: true,
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //     console.log("log out success");
+    setUser(null);
     removeCookie("auth_token");
     removeCookie("XSRF-TOKEN");
-    setUser(null);
     //remove cookies
     navigate("/");
+    // })
+    // .catch((err) => {
+    //   console.log("error message :", err);
+    // });
     //remove user and navigate to root router
     window.location.reload();
     //reload page
@@ -445,7 +467,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setIsAuth(false);
     }
-  }, [cookies, getCookie]);
+  }, [cookies, getCookie, user]);
   useEffect(() => {
     getPosts();
   }, [getPosts, addPost]);
@@ -588,6 +610,7 @@ export const AuthProvider = ({ children }) => {
           deleteUser,
           updateUser,
           getUserRoles,
+          nextData,
         }}
       >
         {children}

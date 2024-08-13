@@ -12,8 +12,10 @@ const AllPosts = () => {
     handleMode,
     serachInTitle,
     fetchNextPage,
+    nextData,
   } = useContext(AuthContext);
   const [value, setValue] = useState("");
+  console.log(nextData);
 
   return (
     <>
@@ -97,8 +99,16 @@ const AllPosts = () => {
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         >
-          <button>More aticles</button>
-          <FaArrowRight />
+          {nextData ? (
+            <>
+              <button>More aticles</button>
+              <FaArrowRight />
+            </>
+          ) : (
+            <button disabled style={{ cursor: "not-allowed" }}>
+              No More aticles
+            </button>
+          )}
         </div>
       ) : null}
     </>
