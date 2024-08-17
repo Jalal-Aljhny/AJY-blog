@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 const Home = () => {
   const { sendData: data, mode, handleMode } = useContext(AuthContext);
-  console.log(data);
 
   return (
     <>

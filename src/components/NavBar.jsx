@@ -96,7 +96,6 @@ const NavBar = () => {
                 onClick={async () => {
                   setShowMenu(false);
                   await signout();
-                  await signout();
                 }}
               >
                 Sign Out

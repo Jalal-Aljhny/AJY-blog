@@ -1,9 +1,11 @@
 import { FiSend } from "react-icons/fi";
 import styles from "./contact.module.css";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
+import { AuthContext } from "../../services/context/AuthContext";
 
 const Contactus = () => {
   const [errors, setErrors] = useState({});
+  const { validateUserName } = useContext(AuthContext);
   const nameRef = useRef();
   const emailRef = useRef();
   const subjectRef = useRef();
@@ -11,11 +13,6 @@ const Contactus = () => {
   const validateEmail = (email) => {
     const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return re.test(email);
-  };
-
-  const validateUserName = (username) => {
-    const re = /^[a-zA-Z]/;
-    return re.test(username);
   };
 
   const validateMessage = (message) => {

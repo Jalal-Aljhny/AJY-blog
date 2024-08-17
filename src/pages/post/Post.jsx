@@ -31,10 +31,16 @@ const Post = () => {
     <article className={`container`}>
       {data ? (
         <div className={styles.post}>
-          <div className={styles.image}>
-            <img src={data.post.imgUrl} alt="" />
-          </div>
-          <h2 className={styles.title}>{data.post.title}</h2>
+          {data.post.imgUrl ? (
+            <div className={styles.image}>
+              <img src={data.post.imgUrl} alt="post-image" />
+            </div>
+          ) : null}
+          <h2
+            className={data.post.imgUrl ? styles.title : styles.title_no_image}
+          >
+            {data.post.title}
+          </h2>
           {isAuth ? (
             <div className={styles.body}>{parse(data.post.caption)}</div>
           ) : (

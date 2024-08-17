@@ -31,7 +31,7 @@
   width: 550px;
   max-width: 100%;
   color: #959ead;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   box-shadow: 0px 2px 20px #77777752;
@@ -42,6 +42,7 @@
   .search {
     margin-bottom: 50px;
     height: 62px;
+    width: 95%;
   }
   .search__field {
     height: 50px;
@@ -54,7 +55,8 @@
     width: 100% !important;
     position: absolute;
     top: 125%;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 .search__icon {

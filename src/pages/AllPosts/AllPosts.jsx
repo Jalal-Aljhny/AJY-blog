@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { AuthContext } from "../../services/context/AuthContext";
 import Post from "../../components/Post";
@@ -15,7 +15,25 @@ const AllPosts = () => {
     nextData,
   } = useContext(AuthContext);
   const [value, setValue] = useState("");
-  console.log(nextData);
+  const divObserver = useRef(null);
+
+  useEffect(() => {
+    const testDiv = divObserver.current;
+
+    const observer = new IntersectionObserver((entry) => {
+      const testerDiv = entry[0];
+      if (testerDiv.isIntersecting) {
+        fetchNextPage();
+      }
+    }, {});
+
+    if (divObserver.current) {
+      observer.observe(testDiv);
+    }
+    return () => {
+      observer.unobserve(testDiv);
+    };
+  }, [data, divObserver, fetchNextPage]);
 
   return (
     <>
@@ -82,6 +100,7 @@ const AllPosts = () => {
               );
             })
           : null}
+        <div ref={divObserver}></div>
       </section>
       {mode == "search" && data?.posts?.length == 0 ? (
         <small

@@ -16,6 +16,20 @@
   height: 250px;
   box-shadow: 0px 2px 20px #77777752;
 }
+.alt_image {
+  width: 100%;
+  max-height: 250px;
+  box-shadow: 0px 2px 20px #77777752;
+  padding: 7rem;
+  color: #183b56;
+  font-weight: bold;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: capitalize;
+  background-color: #c9e4ca;
+}
 .card div {
   width: 90%;
   display: flex;

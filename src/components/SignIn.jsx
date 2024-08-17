@@ -26,7 +26,6 @@ const SignIn = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
-  console.log(signInErrors);
 
   return (
     <form

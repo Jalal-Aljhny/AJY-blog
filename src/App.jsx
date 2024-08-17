@@ -33,6 +33,7 @@ const App = () => {
       <Routes>
         <Route index element={<Home />} />
 
+        {/* <Route path="/addPost" element={<AddPost />} /> */}
         {isAuth ? (
           <Route path="/addPost" element={<AddPost />} />
         ) : (
@@ -82,14 +83,15 @@ const App = () => {
             element={<Navigate to={"/signin"} replace />}
           />
         )}
-        {isAuth ? (
+        <Route path="/contact" element={<Contactus />} />
+        {/* {isAuth ? (
           <Route path="/contact" element={<Contactus />} />
         ) : (
           <Route
             path="/contact"
             element={<Navigate to={"/signin"} replace />}
           />
-        )}
+        )} */}
         {isAuth ? (
           <>
             <Route path="/signin" element={<Navigate to={"/"} />} />

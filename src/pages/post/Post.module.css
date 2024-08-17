@@ -32,6 +32,18 @@
   font-size: 0.8rem;
   text-align: center;
 }
+.title_no_image {
+  text-align: center;
+  color: #777;
+  font-size: 2rem;
+  text-transform: capitalize;
+  text-shadow: 3px 6px 5px #77777775;
+}
+@media (min-width: 991px) {
+  .title_no_image {
+    font-size: 3rem;
+  }
+}
 @media (min-width: 576px) and (max-width: 767px) {
   .title {
     margin-top: -9%;

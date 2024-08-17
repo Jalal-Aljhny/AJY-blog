@@ -6,6 +6,7 @@ import { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../services/context/AuthContext";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import AltImage from "./AltImage";
 
 const Post = ({ image, title, date, id }) => {
   const { user, profile, deletePost } = useContext(AuthContext);
@@ -24,7 +25,11 @@ const Post = ({ image, title, date, id }) => {
 
   return (
     <Link to={`/posts/${id}`} className={styles.card}>
-      <img src={image} alt="Post image" />
+      {image ? (
+        <img src={image} alt="Post image" />
+      ) : (
+        <AltImage postTitle={title} />
+      )}
       <p>{title}</p>
       <div className={styles.permissions}></div>
       <div>

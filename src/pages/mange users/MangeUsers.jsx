@@ -3,27 +3,36 @@ import { AuthContext } from "../../services/context/AuthContext";
 import styles from "./MangeUsers.module.css";
 import { useForm } from "react-hook-form";
 const MangeUsers = () => {
-  const { getUsers, deleteUser, updateUser, getUserRoles } =
-    useContext(AuthContext);
+  const {
+    getUsers,
+    deleteUser,
+    updateUser,
+    getUserRoles,
+    validateUserName,
+    getUserInfo,
+  } = useContext(AuthContext);
   const [users, setUsers] = useState();
   const [mode, setMode] = useState("users");
   const [roles, setRoles] = useState("");
   const [userId, setUserId] = useState();
+  const [userName, setUserName] = useState();
   const handleRoles = useCallback(
-    (id) => {
-      getUserRoles(id).then((res) => {
-        console.log(res.data);
+    async (id) => {
+      await getUserRoles(id).then((res) => {
         setRoles(res.data);
         setUserId(id);
       });
+      getUserInfo(id).then((res) => {
+        setUserName(res.data.user.name);
+      });
     },
-    [getUserRoles]
+    [getUserInfo, getUserRoles]
   );
+
   useEffect(() => {
     getUsers()
       .then((res) => {
         setUsers(res.data.users);
-        console.log(res.data.users);
       })
       .catch((err) => console.log(err.message));
   }, [getUsers]);
@@ -35,16 +44,14 @@ const MangeUsers = () => {
   } = useForm();
 
   const onSumbit = async (data) => {
+    console.log(data);
     if (data.role == "user") {
       data.role = "";
     }
-    updateUser(userId, data.username, data.role);
-    setMode("users");
-  };
-
-  const validateUserName = (username) => {
-    const re = /^[a-zA-Z]/;
-    return re.test(username);
+    await updateUser(userId, data.username, data.role);
+    await getUsers().then((res) => {
+      setUsers(res.data.users);
+    });
   };
 
   return (
@@ -102,16 +109,28 @@ const MangeUsers = () => {
         >
           <h2>Edit User Roles</h2>
           <div className="input__group">
-            <label htmlFor="name">New Name : </label>
-            <input
-              type="text"
-              id="name"
-              {...register("username", {
-                required: true,
-                validate: validateUserName,
-              })}
-              className={errors.username ? "error" : null}
-            />
+            <div>
+              <label>Current Name : </label>
+              <small className="success">{userName}</small>
+            </div>
+            <div>
+              <label
+                htmlFor="name"
+                style={{ width: "100px", display: "inline-block" }}
+              >
+                New Name :
+              </label>
+              <input
+                type="text"
+                id="name"
+                {...register("username", {
+                  required: true,
+                  validate: validateUserName,
+                })}
+                className={errors.username ? "error" : null}
+                style={{ width: "200px" }}
+              />
+            </div>
             {errors.username?.type == "required" ? (
               <small className="error__message">
                 New name cannot be empty.
@@ -125,7 +144,7 @@ const MangeUsers = () => {
           </div>
           <div className="input__group">
             <div>
-              <label htmlFor="new_roles">Current Role : </label>
+              <label>Current Role : </label>
               {roles && roles.userRole[0] ? (
                 <small className="success" style={{ fontSize: "1rem" }}>
                   {roles.userRole[0]}
@@ -137,16 +156,25 @@ const MangeUsers = () => {
               )}
             </div>
             <div>
-              <label htmlFor="new_roles">New Roles : </label>
+              <label
+                htmlFor="new_roles"
+                style={{ width: "100px", display: "inline-block" }}
+              >
+                New Roles :
+              </label>
               <select
                 id="new_roles"
                 {...register("role", {
                   required: true,
                 })}
                 className={errors.role ? "error" : null}
-                style={errors.role ? { borderColor: "#f0160b" } : null}
+                style={
+                  errors.role
+                    ? { borderColor: "#f0160b", width: "200px" }
+                    : { width: "200px" }
+                }
               >
-                <option disabled="disabled">--select role--</option>
+                <option value={""}>--select role--</option>
                 <option value="user"> user</option>
                 <option value="admin">admin</option>
                 <option value="super admin"> super admin</option>
@@ -166,7 +194,11 @@ const MangeUsers = () => {
           >
             Go Back
           </button>
-          <button className="submit" type="submit">
+          <button
+            className="submit"
+            type="submit"
+            onClick={handleSubmit(onSumbit)}
+          >
             Update
           </button>
         </form>

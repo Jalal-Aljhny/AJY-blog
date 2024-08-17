@@ -47,6 +47,17 @@ export const AuthProvider = ({ children }) => {
       message: null,
     });
   }, []);
+  const validateUserName = useCallback((username) => {
+    const re = /^[a-zA-Z]/;
+    return re.test(username);
+  }, []);
+  const validateMessage = useCallback((message) => {
+    if (message.length < 50 || message.length >= 500) {
+      return false;
+    } else {
+      return true;
+    }
+  }, []);
 
   // get cookie if exists
   const getCookie = useCallback((name) => {
@@ -57,10 +68,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const profile = useCallback(async () => {
-    await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-      withCredentials: true,
-      withXSRFToken: true,
-    });
     await axios
       .get("http://127.0.0.1:8000/api/profile", {
         headers: {
@@ -80,10 +87,6 @@ export const AuthProvider = ({ children }) => {
   }, [cookies.auth_token]);
   const changeName = useCallback(
     async (newName) => {
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
       await axios
         .patch(
           "http://127.0.0.1:8000/api/profile",
@@ -108,10 +111,6 @@ export const AuthProvider = ({ children }) => {
   );
   const changePassword = useCallback(
     async (password, newPassword, confirmNewPassword) => {
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
       await axios
         .patch(
           "http://127.0.0.1:8000/api/profile/update-password",
@@ -181,11 +180,6 @@ export const AuthProvider = ({ children }) => {
         formData.append("img", img);
       }
 
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
-
       // post request
       await axios
         .post(`http://127.0.0.1:8000/api/posts/${id}`, formData, {
@@ -220,11 +214,6 @@ export const AuthProvider = ({ children }) => {
       formData.append("caption", caption);
       formData.append("img", img);
 
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
-
       // post request
       await axios
         .post("http://127.0.0.1:8000/api/posts", formData, {
@@ -251,11 +240,6 @@ export const AuthProvider = ({ children }) => {
   );
   const deletePost = useCallback(
     async (id) => {
-      await axios.get("http://127.0.0.1:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-      });
-
       await axios
         .delete(`http://127.0.0.1:8000/api/posts/${id}`, {
           headers: {
@@ -324,6 +308,7 @@ export const AuthProvider = ({ children }) => {
               Accept: "application/json",
               "Content-Type": "application/json",
               "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+              "X-Requested-With": "XMLHttpRequest",
             },
             withCredentials: true,
             withXSRFToken: true,
@@ -446,7 +431,8 @@ export const AuthProvider = ({ children }) => {
     //     console.log(res);
     //     console.log("log out success");
     setUser(null);
-    removeCookie("auth_token");
+    setIsAuth(false);
+    removeCookie("auth_token", { path: "/" });
     removeCookie("XSRF-TOKEN");
     //remove cookies
     navigate("/");
@@ -510,15 +496,6 @@ export const AuthProvider = ({ children }) => {
   );
   const updateUser = useCallback(
     async (id, name, role) => {
-      await axios.get(
-        "http://127.0.0.1:8000/sanctum/csrf-cookie",
-
-        {
-          withCredentials: true,
-          withXSRFToken: true,
-        }
-      );
-
       await axios
         .post(
           `http://127.0.0.1:8000/api/users/${id}`,
@@ -561,6 +538,20 @@ export const AuthProvider = ({ children }) => {
     },
     [cookies, getCookie]
   );
+  const getUserInfo = useCallback(
+    (id) => {
+      return axios.get(`http://127.0.0.1:8000/api/users/${id}`, {
+        headers: {
+          Accept: "application/json",
+          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+          Authorization: `Bearer ${cookies.auth_token}`,
+        },
+        withCredentials: true,
+        withXSRFToken: true,
+      });
+    },
+    [cookies.auth_token, getCookie]
+  );
 
   // const getRoles = useCallback(async () => {
   //   await axios
@@ -585,6 +576,8 @@ export const AuthProvider = ({ children }) => {
           register,
           errors,
           clearErrors,
+          validateUserName,
+          validateMessage,
           logIn,
           profile,
           user,
@@ -607,6 +600,7 @@ export const AuthProvider = ({ children }) => {
           updatePostById,
           updatePostErrors,
           getUsers,
+          getUserInfo,
           deleteUser,
           updateUser,
           getUserRoles,

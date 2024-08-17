@@ -15,6 +15,7 @@ const AddPost = () => {
   const handleImageChange = (event) => {
     setImage(event.target.files[0]);
   };
+
   return (
     <section className="container">
       <form
@@ -35,6 +36,19 @@ const AddPost = () => {
           <div className="form-group">
             <small className="error">
               You send Unprocessable Content ,Correct it and try again.
+              <br />
+              <small
+                className="error__message"
+                style={{
+                  textAlign: "left",
+                  display: "inline-flex",
+                  paddingTop: "0.25rem",
+                }}
+              >
+                &#x2022; Post title characters should be less than 50. <br />
+                &#x2022; Post image is required <br />
+                &#x2022; Post body is required <br />
+              </small>
             </small>
           </div>
         ) : null}

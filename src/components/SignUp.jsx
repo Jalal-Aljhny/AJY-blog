@@ -16,16 +16,12 @@ const SignUp = () => {
     register: signUp,
     errors: signUpErrors,
     clearErrors,
+    validateUserName,
   } = useContext(AuthContext);
 
   const onSumbit = async (data) => {
     clearErrors();
     await signUp(data.username, data.email, data.password, data.password2);
-  };
-
-  const validateUserName = (username) => {
-    const re = /^[a-zA-Z]/;
-    return re.test(username);
   };
 
   const validateEmail = (email) => {

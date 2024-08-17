@@ -17,6 +17,7 @@ const Change = () => {
     changePassword,
     changePasswordState,
     clearChangePasswordState,
+    validateUserName,
   } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
@@ -27,11 +28,6 @@ const Change = () => {
     } else {
       changePassword(data.password, data.passwordN, data.password2);
     }
-  };
-
-  const validateUserName = (username) => {
-    const re = /^[a-zA-Z]/;
-    return re.test(username);
   };
 
   const validatePassword = (password) => {
