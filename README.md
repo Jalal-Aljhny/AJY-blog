@@ -5,6 +5,7 @@
 - **Authentication and Autherization** with JWT(json web token) .
 - **Strong validation before send request to API** in all form using react-hook-form .
 - **Protected routes** depending on (Roles , Registeration) using react-router-dom .
+- **Using Intersection Observer** to load next pagination data when scroll .
 - contain (add post , edit post , delete post , edit users , delete users , edit roles ,)methods from api .
 - Unregistered users can read firt 50 word of post only .
 - Save needed previos routes in session so :
