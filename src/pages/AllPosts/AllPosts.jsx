@@ -96,6 +96,7 @@ const AllPosts = () => {
                   date={post["Last Update"]}
                   userId={post.user_id}
                   key={post.id}
+                  caption={post.caption}
                 />
               );
             })

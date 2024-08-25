@@ -2,13 +2,13 @@ import PropTypes from "prop-types";
 import styles from "./Post.module.css";
 import useDate from "../hooks/useDate";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { AuthContext } from "../services/context/AuthContext";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import AltImage from "./AltImage";
 
-const Post = ({ image, title, date, id }) => {
+const Post = ({ image, title, date, id, caption }) => {
   const { user, profile, deletePost } = useContext(AuthContext);
   const isMount = useRef(false);
   const location = useLocation();
@@ -22,6 +22,15 @@ const Post = ({ image, title, date, id }) => {
       sessionStorage.setItem("previos_route", location.pathname);
     }
   }, [profile, user, location.pathname]);
+  const getReadTime = useMemo(() => {
+    const wpm = 225;
+    const post = caption.trim().split(" ");
+    if (post?.length > 0) {
+      const time = Math.ceil(post.length / wpm);
+      return time;
+    }
+    return;
+  }, [caption]);
 
   return (
     <Link to={`/posts/${id}`} className={styles.card}>
@@ -31,6 +40,7 @@ const Post = ({ image, title, date, id }) => {
         <AltImage postTitle={title} />
       )}
       <p>{title}</p>
+
       <div className={styles.permissions}></div>
       <div>
         {user?.permissions?.includes("Edit Post") ? (
@@ -56,7 +66,11 @@ const Post = ({ image, title, date, id }) => {
             <MdDeleteForever size={20} />
           </small>
         ) : null}
-        <small>Last update : {useDate(date)}</small>
+        <small>
+          {getReadTime} min read
+          <br />
+          Last update : {useDate(date)}
+        </small>
       </div>
     </Link>
   );
@@ -67,5 +81,6 @@ Post.propTypes = {
   title: PropTypes.string,
   id: PropTypes.number,
   date: PropTypes.string,
+  caption: PropTypes.string,
 };
 export default Post;
